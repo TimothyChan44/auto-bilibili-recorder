@@ -7,6 +7,7 @@ FROM ${COMMON_IMAGE}
 ENV TZ=Asia/Shanghai
 ARG DEBIAN_FRONTEND=noninteractive
 
+RUN sed -i "s@http://archive.ubuntu.com@http://mirrors.aliyun.com@g" /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y wget git apt-transport-https software-properties-common
 RUN add-apt-repository universe
@@ -50,6 +51,11 @@ RUN rm -rf /root/.dotnet
 
 WORKDIR "/"
 
+# To Solve Problem: fatal: unable to access GnuTLS recv error (-110): The TLS connection was non-properly terminated.
+RUN apt-get update && apt-get install -y gnutls-bin && \
+git config --global http.sslVerify false && \
+git config --global http.postBuffer 1048576000
+
 RUN git clone https://github.com/hihkm/DanmakuFactory.git && cd DanmakuFactory && git checkout cab7cf813e5322ec3f41431fcae330a800d457a3
 
 WORKDIR "/DanmakuFactory"
@@ -63,19 +69,22 @@ RUN pip3 install git+https://github.com/valkjsaaa/danmaku_tools.git@4853f226301f
 
 WORKDIR "/usr/local/bin"
 
-RUN wget https://raw.githubusercontent.com/keylase/nvidia-patch/e87985e03ac2cf9b8e8086aa4b33a140f46fe036/patch.sh && \
-    wget https://raw.githubusercontent.com/keylase/nvidia-patch/e87985e03ac2cf9b8e8086aa4b33a140f46fe036/docker-entrypoint.sh && \
-    chmod +x patch.sh && \
+# RUN wget https://raw.githubusercontent.com/keylase/nvidia-patch/e87985e03ac2cf9b8e8086aa4b33a140f46fe036/patch.sh && \
+#     wget https://raw.githubusercontent.com/keylase/nvidia-patch/e87985e03ac2cf9b8e8086aa4b33a140f46fe036/docker-entrypoint.sh && \
+COPY patches/ ./
+
+RUN chmod +x patch.sh && \
     chmod +x docker-entrypoint.sh
 
 WORKDIR "/webhook"
 
 COPY requirements.txt .
 RUN pip3 install --upgrade -r requirements.txt
-RUN wget https://raw.githubusercontent.com/valkjsaaa/Bilibili-Toolkit/7b86a61214149cc3f790d02d5d06ecd7540b9bdb/bilibili.py
 
+# RUN wget https://raw.githubusercontent.com/valkjsaaa/Bilibili-Toolkit/7b86a61214149cc3f790d02d5d06ecd7540b9bdb/bilibili.py
 COPY *.py .
 
 WORKDIR "/storage"
+COPY asoul_bot_03_31/ ./
 ENV PYTHONUNBUFFERED=1
 CMD /usr/local/bin/docker-entrypoint.sh python3 -u /webhook/process_video.py
