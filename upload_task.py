@@ -33,7 +33,7 @@ class UploadTask:
 
         filename = video_upload(self.video_path, verify=self.verify, on_progress=on_progress)
         if self.danmaku:
-            suffix = "弹幕高能版"
+            suffix = "有弹幕版"
         else:
             suffix = "无弹幕版"
         if self.session_id not in session_dict:
