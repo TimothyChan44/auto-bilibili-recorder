@@ -139,7 +139,7 @@ class Session:
             # "he_file": self.output_base_path() + ".he.txt",
             # "he_range": self.output_base_path() + ".he_range.txt",
             # "sc_file": self.output_base_path() + ".sc.txt",
-            # "sc_srt": self.output_base_path() + ".sc.srt",
+            "sc_srt": self.output_base_path() + ".sc.srt",
             # "he_pos": self.output_base_path() + ".he_pos.txt",
             "extras_log": self.output_base_path() + ".extras.log",
             "video_log": self.output_base_path() + ".video.log",

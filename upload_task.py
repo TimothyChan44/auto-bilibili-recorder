@@ -9,12 +9,14 @@ SPECIAL_SPACE = "\u2007"
 
 class UploadTask:
 
-    def __init__(self, session_id, video_path, thumbnail_path, sc_path, he_path, subtitle_path,
-                 title, source, description, tag, channel_id, danmaku, account: UploaderAccount):
+    def __init__(self, session_id, video_path,video_dmv_path, thumbnail_path,
+                #  sc_path, he_path, 
+                 subtitle_path,title, source, description, tag, channel_id, danmaku, account: UploaderAccount):
         self.session_id = session_id
         self.video_path = video_path
-        self.sc_path = sc_path
-        self.he_path = he_path
+        self.video_dmv_path = video_dmv_path
+        # self.sc_path = sc_path
+        # self.he_path = he_path
         self.subtitle_path = subtitle_path
         self.thumbnail_path = thumbnail_path
         self.title = title
@@ -31,11 +33,11 @@ class UploadTask:
         def on_progress(update):
             print(update)
 
-        filename = video_upload(self.video_path, verify=self.verify, on_progress=on_progress)
+        filename_pure = video_upload(self.video_path, verify=self.verify, on_progress=on_progress)
+        filename_dmv = video_upload(self.video_dmv_path, verify=self.verify, on_progress=on_progress)
         if self.danmaku:
             suffix = "有弹幕版"
-        else:
-            suffix = "无弹幕版"
+        pure = "无弹幕版"
         if self.session_id not in session_dict:
             cover_url = video_cover_upload(self.thumbnail_path, verify=self.verify)
             data = {
@@ -53,11 +55,16 @@ class UploadTask:
                 },
                 "tag": self.tag,
                 "tid": self.channel_id,
-                "title": self.title + SPECIAL_SPACE + suffix,
+                "title": self.title,
                 "videos": [
                     {
                         "desc": "",
-                        "filename": filename,
+                        "filename": filename_pure,
+                        "title": pure
+                    },
+                    {
+                        "desc": "",
+                        "filename": filename_dmv,
                         "title": suffix
                     }
                 ]

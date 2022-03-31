@@ -196,44 +196,43 @@ class RecordUploadManager:
             self.save.video_name_history[session.session_id] = title
         description = Template(room_config.description).substitute(substitute_dict)
         await session.gen_early_video()
+        await session.gen_danmaku_video()
         early_upload_task = None
         if session.early_video_path is not None:
-            early_upload_task = UploadTask(
+            pages_upload_task = UploadTask(
                 session_id=session.session_id,
                 video_path=session.early_video_path,
+                video_dmv_path=session.output_path()['danmaku_video'],
                 thumbnail_path=session.output_path()['thumbnail'],
-                # sc_path=session.output_path()['sc_file'],
-                # he_path=session.output_path()['he_file'],
-                # subtitle_path=session.output_path()['sc_srt'],
+                subtitle_path=session.output_path()['sc_srt'],
                 title=title,
                 source=room_config.source,
                 description=description,
                 tag=room_config.tags,
                 channel_id=room_config.channel_id,
-                danmaku=False,
+                danmaku=True,
                 account=uploader
             )
-            self.video_upload_queue.put(early_upload_task)
-        await asyncio.sleep(WAIT_SESSION_MINUTES * 60)
-        await session.gen_danmaku_video()
-        danmaku_upload_task = UploadTask(
-            session_id=session.session_id,
-            video_path=session.output_path()['danmaku_video'],
-            thumbnail_path=session.output_path()['thumbnail'],
-            # sc_path=session.output_path()['sc_file'],
-            # he_path=session.output_path()['he_file'],
-            # subtitle_path=session.output_path()['sc_srt'],
-            title=title,
-            source=room_config.source,
-            description=description,
-            tag=room_config.tags,
-            channel_id=room_config.channel_id,
-            danmaku=True,
-            account=uploader
-        )
-        self.video_upload_queue.put(
-            danmaku_upload_task
-        )
+            self.video_upload_queue.put(pages_upload_task)
+        # await asyncio.sleep(WAIT_SESSION_MINUTES * 60)        
+        # danmaku_upload_task = UploadTask(
+        #     session_id=session.session_id,
+        #     video_path=session.output_path()['danmaku_video'],
+        #     thumbnail_path=session.output_path()['thumbnail'],
+        #     # sc_path=session.output_path()['sc_file'],
+        #     # he_path=session.output_path()['he_file'],
+        #     subtitle_path=session.output_path()['sc_srt'],
+        #     title=title,
+        #     source=room_config.source,
+        #     description=description,
+        #     tag=room_config.tags,
+        #     channel_id=room_config.channel_id,
+        #     danmaku=True,
+        #     account=uploader
+        # )
+        # self.video_upload_queue.put(
+        #     danmaku_upload_task
+        # )
         if early_upload_task is None:
             self.comment_post_queue.put(
                 CommentTask.from_upload_task(danmaku_upload_task)
