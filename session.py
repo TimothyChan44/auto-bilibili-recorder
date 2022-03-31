@@ -135,7 +135,7 @@ class Session:
             "danmaku_video": self.output_base_path() + ".bar.mp4",
             "concat_file": self.output_base_path() + ".concat.txt",
             "thumbnail": self.output_base_path() + ".thumb.png",
-            "he_graph": self.output_base_path() + ".he.png",
+            # "he_graph": self.output_base_path() + ".he.png",
             "he_file": self.output_base_path() + ".he.txt",
             "he_range": self.output_base_path() + ".he_range.txt",
             "sc_file": self.output_base_path() + ".sc.txt",
@@ -166,7 +166,7 @@ class Session:
     async def process_xml(self):
         danmaku_extras_command = \
             f"python3 -m danmaku_tools.danmaku_energy_map " \
-            f"--graph \"{self.output_path()['he_graph']}\" " \
+            # f"--graph \"{self.output_path()['he_graph']}\" " \
             f"--he_map \"{self.output_path()['he_file']}\" " \
             f"--sc_list \"{self.output_path()['sc_file']}\" " \
             f"--he_time \"{self.output_path()['he_pos']}\" " \
@@ -263,8 +263,9 @@ class Session:
         max_video_bitrate = float(8000)  # BiliBili now re-encode every video anyways
         video_bitrate = int(min(max_video_bitrate, video_bitrate))
         video_res_x, video_res_y = self.get_resolution()
-        ffmpeg_command = f'''ffmpeg -y -loop 1 -t {total_time} \
-        -i "{self.output_path()['he_graph']}" \
+
+        # -i "{self.output_path()['he_graph']}" \
+        ffmpeg_command = f'''ffmpeg -y -loop 1 -t {total_time} \        
         -f concat \
         -safe 0 \
         -i "{self.output_path()['concat_file']}" \
