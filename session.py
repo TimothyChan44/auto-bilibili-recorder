@@ -136,11 +136,11 @@ class Session:
             "concat_file": self.output_base_path() + ".concat.txt",
             "thumbnail": self.output_base_path() + ".thumb.png",
             # "he_graph": self.output_base_path() + ".he.png",
-            "he_file": self.output_base_path() + ".he.txt",
-            "he_range": self.output_base_path() + ".he_range.txt",
-            "sc_file": self.output_base_path() + ".sc.txt",
-            "sc_srt": self.output_base_path() + ".sc.srt",
-            "he_pos": self.output_base_path() + ".he_pos.txt",
+            # "he_file": self.output_base_path() + ".he.txt",
+            # "he_range": self.output_base_path() + ".he_range.txt",
+            # "sc_file": self.output_base_path() + ".sc.txt",
+            # "sc_srt": self.output_base_path() + ".sc.srt",
+            # "he_pos": self.output_base_path() + ".he_pos.txt",
             "extras_log": self.output_base_path() + ".extras.log",
             "video_log": self.output_base_path() + ".video.log",
         }
@@ -166,12 +166,7 @@ class Session:
     async def process_xml(self):
         danmaku_extras_command = \
             f"python3 -m danmaku_tools.danmaku_energy_map " \
-            # f"--graph \"{self.output_path()['he_graph']}\" " \
-            f"--he_map \"{self.output_path()['he_file']}\" " \
-            f"--sc_list \"{self.output_path()['sc_file']}\" " \
-            f"--he_time \"{self.output_path()['he_pos']}\" " \
-            f"--sc_srt \"{self.output_path()['sc_srt']}\" " \
-            f"--he_range \"{self.output_path()['he_range']}\" " + \
+            f"--sc_list \"{self.output_path()['sc_file']}\" " + \
             (
                 f"--user_dict \"{self.room_config.he_user_dict}\" "
                 if self.room_config.he_user_dict is not None else ""
@@ -183,9 +178,9 @@ class Session:
             f"\"{self.output_path()['clean_xml']}\" " \
             f">> \"{self.output_path()['extras_log']}\" 2>&1"
         await async_wait_output(danmaku_extras_command)
-        with open(self.output_path()['he_pos'], 'r') as file:
-            he_time_str = file.readline()
-            self.he_time = float(he_time_str)
+        # with open(self.output_path()['he_pos'], 'r') as file:
+        #     he_time_str = file.readline()
+        #     self.he_time = float(he_time_str)
 
     def generate_concat(self):
         concat_text = "\n".join([f"file '{video.flv_file_path()}'" for video in self.videos])
