@@ -1,0 +1,22 @@
+version: '3'
+services:
+  test:
+    build: .
+    ports:
+      - "5000:5000"
+    # stdin_open: true
+    # tty: true
+
+    extra_hosts:
+     - "github.com:140.82.113.3"
+     - "github.githubassets.com:185.199.108.154"
+     - "github.githubassets.com:185.199.109.154"
+     - "github.githubassets.com:185.199.110.154"
+     - "github.githubassets.com:185.199.111.154"
+     - "camo.githubusercontent.com:199.232.68.133"
+     - "github.map.fastly.net:199.232.68.133"
+     - "github.global.ssl.fastly.net:199.232.69.194"
+     - "api.github.com:140.82.113.5"
+     - "raw.githubusercontent.com:199.232.68.133"
+     - "user-images.githubusercontent.com:199.232.68.133"
+     - "favicons.githubusercontent.com:199.232.68.133"
